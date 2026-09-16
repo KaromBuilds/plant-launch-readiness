@@ -19,6 +19,7 @@ export interface Database {
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["plants"]["Insert"]>;
+        Relationships: [];
       };
       plant_managers: {
         Row: {
@@ -36,6 +37,15 @@ export interface Database {
         Update: Partial<
           Database["public"]["Tables"]["plant_managers"]["Insert"]
         >;
+        Relationships: [
+          {
+            foreignKeyName: "plant_managers_plant_id_fkey";
+            columns: ["plant_id"];
+            isOneToOne: false;
+            referencedRelation: "plants";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       owner_assignments: {
         Row: {
@@ -57,7 +67,22 @@ export interface Database {
         Update: Partial<
           Database["public"]["Tables"]["owner_assignments"]["Insert"]
         >;
+        Relationships: [
+          {
+            foreignKeyName: "owner_assignments_plant_id_fkey";
+            columns: ["plant_id"];
+            isOneToOne: false;
+            referencedRelation: "plants";
+            referencedColumns: ["id"];
+          },
+        ];
       };
     };
+    Views: Record<string, never>;
+    Functions: Record<string, never>;
+    Enums: {
+      owner_role: OwnerRole;
+    };
+    CompositeTypes: Record<string, never>;
   };
 }
