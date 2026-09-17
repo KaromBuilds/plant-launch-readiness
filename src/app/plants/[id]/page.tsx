@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { getManagedPlant } from "@/lib/plants";
-import { getOwnerAssignments } from "@/lib/owner-assignments";
+import { getManagedPlant, getManagedPlants } from "@/lib/plants";
+import { getManagedAssignments } from "@/lib/owner-assignments";
 import { LaunchPanel } from "@/components/launch-panel/launch-panel";
 
 export default async function PlantPage({
@@ -21,7 +21,13 @@ export default async function PlantPage({
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const assignments = await getOwnerAssignments(plant.id);
+  const [assignments, plants] = await Promise.all([
+    getManagedAssignments(),
+    getManagedPlants(),
+  ]);
+  const plantNamesById = Object.fromEntries(
+    plants.map((p) => [p.id, p.name]),
+  );
 
   return (
     <main className="flex flex-1 flex-col p-8">
@@ -37,6 +43,7 @@ export default async function PlantPage({
         plantId={plant.id}
         userId={user!.id}
         initialAssignments={assignments}
+        plantNamesById={plantNamesById}
       />
     </main>
   );
