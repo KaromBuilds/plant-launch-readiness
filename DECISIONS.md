@@ -95,21 +95,50 @@ on conflict do nothing;
 Worth updating `supabase/seed.sql`'s instructions to lead with this instead
 of the copy-the-UUID approach.
 
+## 2026-09-16 — English translation, Vercel deploy, full test plan pass
+
+**Translated all UI copy from Spanish to English.** The app was originally
+built with Spanish strings (page copy, buttons, role labels, the conflict
+banner, validation messages, VR preview states, the map legend, `<html
+lang>`) since `docs/PACKET.md` frames the product for a Mexican Plant
+Manager. The course requires English deliverables, so every user-facing
+string was translated — no logic changes, only literal text. The 3 seeded
+plant names were translated too (`Planta Norte — Apodaca` → `North Plant —
+Apodaca`, etc.), keeping the city names as proper nouns; both the tracked
+seed file and the already-seeded live rows (via a targeted `UPDATE`) were
+updated to match.
+
+**Deployed to Vercel** at https://plant-launch-readiness.vercel.app, with
+`NEXT_PUBLIC_SUPABASE_URL`/`NEXT_PUBLIC_SUPABASE_ANON_KEY` set as Vercel env
+vars (never committed) and the deploy's `/auth/callback` URL added to
+Supabase's Auth redirect allow-list alongside the localhost one. Google
+Sign-In confirmed working on the live deploy.
+
+**All 7 Test Plan items from `docs/PACKET.md` pass against the live
+deployment:** default lock, partial assignment, conflict detection, full
+unlock (including the Three.js preview + simulation seal), persistence
+across reload, RLS/privacy (verified item 6 myself via a direct REST call
+with only the anon key and no session — `GET /rest/v1/plants` returns `[]`,
+confirming RLS blocks unauthenticated reads at the database level, not just
+in the UI), and the live-updating plant status map.
+
 ## Outstanding manual setup
 
-1. ~~Create a Supabase project, run the migration + seed SQL.~~ Done.
-2. ~~Enable Google Sign-In in Supabase Auth.~~ Done (local redirect URL
-   only — `http://localhost:3000/auth/callback`).
-3. ~~Link a manager account to demo plants.~~ Done for
-   karom.builds@gmail.com (all 3 plants).
-4. Connect the GitHub repo to a Vercel project, set
-   `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` there, and
-   add the deployed callback URL
-   (`https://<app>.vercel.app/auth/callback`) to Supabase's Auth
-   URL Configuration redirect list alongside the localhost one.
+None blocking — Supabase, Google Sign-In, and Vercel are all live and
+verified end to end. Optional follow-ups if this goes further than the
+course deliverable:
+- The Google OAuth consent screen may still be in "Testing" mode (limited
+  to added test users) rather than published — fine for grading, but would
+  need publishing for a wider audience.
+- `supabase/seed.sql`'s `insert ... on conflict do nothing` has no unique
+  constraint on `plants.name` to actually conflict on, so re-running the
+  seed would insert duplicate plant rows rather than no-op. Not hit in
+  practice since it was only run once, but worth a unique constraint or an
+  `ON CONFLICT (name)` target if the seed script gets reused.
 
 ## Tomorrow's first move
 
-Deploy to Vercel (step 4 above), then walk through all 7 items in
-`docs/PACKET.md`'s Test Plan against the deployed app — not just localhost
-— since that's the actual acceptance test for calling this shipped.
+Nothing blocking is left — this is shippable. If further polish is wanted:
+reassess whether `docs/PACKET.md`'s "simulated role selector" (vs. the real
+Google Sign-In actually built) matches what the grading rubric expects, per
+the note in the first entry above.
