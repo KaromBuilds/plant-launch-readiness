@@ -3,9 +3,9 @@
 -- not refer to real facilities or real people.
 
 insert into public.plants (name, lat, lng) values
-  ('Planta Norte — Apodaca', 25.7785, -100.1817),
-  ('Planta Bajío — Silao', 20.9433, -101.4267),
-  ('Planta Golfo — Altamira', 22.3970, -97.9297)
+  ('North Plant — Apodaca', 25.7785, -100.1817),
+  ('Bajío Plant — Silao', 20.9433, -101.4267),
+  ('Gulf Plant — Altamira', 22.3970, -97.9297)
 on conflict do nothing;
 
 -- ---------------------------------------------------------------------------
