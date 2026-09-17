@@ -53,25 +53,63 @@ were pointed at a scratch cache dir. Running
 `sudo chown -R 501:20 "/Users/karom/.npm"` once (outside this session, since
 it needs sudo) will fix it for good.
 
-## Outstanding manual setup (only the user can do this — needs real accounts)
+## 2026-09-16 — Supabase project setup and first live sign-in
 
-1. Create a Supabase project, run `supabase/migrations/0001_init.sql` then
-   `supabase/seed.sql` in the SQL editor.
-2. Enable the Google provider in Supabase Auth with a real Google OAuth
-   client, and add the local + prod callback URLs to the Auth URL allow
-   list.
-3. Sign in once locally, copy your `auth.users` id, and link yourself to a
-   demo plant via the commented block at the bottom of `supabase/seed.sql`.
-4. Copy `.env.local.example` to `.env.local` and fill in the real Supabase
-   URL/anon key.
-5. Connect the GitHub repo to a Vercel project and set the same two env
-   vars there.
+Created the real Supabase project (`axqirqfeqrhuvetidoed`), wired up Google
+Sign-In, and confirmed the app works end to end against live infra —
+karom.builds@gmail.com signed in via Google, is linked to all 3 seeded
+plants as a manager, and the plant list + status map render real data.
 
-Full steps are in `README.md`.
+**Found and fixed a migration ordering bug.** The first two attempts to run
+`supabase/migrations/0001_init.sql` failed: `CREATE POLICY` resolves every
+relation named in its `USING`/`WITH CHECK` expression at creation time (not
+lazily), and the original script created the `plants` table's RLS policy —
+which reads `plant_managers` — before the `plant_managers` table existed
+later in the same file. Because the SQL editor runs a pasted script as one
+transaction, the whole thing rolled back both times, which looked like "the
+migration silently did nothing" rather than "the migration has an ordering
+bug." Fixed by reordering: both tables now get created first, then
+`plant_managers`' own policy, then the `plants` policy that depends on it,
+then `owner_assignments` and its policies. Saved as a general lesson (not
+project-specific) for future RLS migrations.
+
+**`supabase_migration.sql`** (repo root, untracked) is a scratch copy-paste
+convenience file combining the migration + seed SQL into one block, created
+so it could be pasted into the Supabase SQL editor without hunting through
+two files. It's intentionally not committed — `supabase/migrations/
+0001_init.sql` and `supabase/seed.sql` stay the source of truth; delete the
+scratch file whenever it's no longer useful.
+
+**Linking a manager to plants turned out easier by email than by UUID.**
+Instead of asking the user to copy their `auth.users` id from the dashboard
+(the original plan baked into `supabase/seed.sql`'s commented block), the
+SQL editor can look the id up directly:
+```sql
+insert into public.plant_managers (user_id, plant_id)
+select u.id, p.id
+from auth.users u
+cross join public.plants p
+where u.email = 'the-managers-email@example.com'
+on conflict do nothing;
+```
+Worth updating `supabase/seed.sql`'s instructions to lead with this instead
+of the copy-the-UUID approach.
+
+## Outstanding manual setup
+
+1. ~~Create a Supabase project, run the migration + seed SQL.~~ Done.
+2. ~~Enable Google Sign-In in Supabase Auth.~~ Done (local redirect URL
+   only — `http://localhost:3000/auth/callback`).
+3. ~~Link a manager account to demo plants.~~ Done for
+   karom.builds@gmail.com (all 3 plants).
+4. Connect the GitHub repo to a Vercel project, set
+   `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` there, and
+   add the deployed callback URL
+   (`https://<app>.vercel.app/auth/callback`) to Supabase's Auth
+   URL Configuration redirect list alongside the localhost one.
 
 ## Tomorrow's first move
 
-Once the Supabase project and Vercel deploy exist: walk through all 7 items
-in `docs/PACKET.md`'s Test Plan against the live app (not just the local
-build) and fix anything that doesn't hold up under a real Google session
-and real RLS — that's the actual acceptance test for calling this shipped.
+Deploy to Vercel (step 4 above), then walk through all 7 items in
+`docs/PACKET.md`'s Test Plan against the deployed app — not just localhost
+— since that's the actual acceptance test for calling this shipped.

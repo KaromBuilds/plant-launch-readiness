@@ -13,13 +13,13 @@ on conflict do nothing;
 --
 -- 1. Sign in once with Google in the running app so Supabase creates your
 --    auth.users row.
--- 2. Find your user id in the Supabase dashboard under
---    Authentication > Users, and paste it below in place of
---    'PASTE-YOUR-AUTH-USER-UUID-HERE'.
--- 3. Run this block in the Supabase SQL editor.
+-- 2. Run this block in the Supabase SQL editor, with your email in place of
+--    'your-email@example.com' — it looks up your auth.users id directly, so
+--    there's no need to copy a UUID from the dashboard by hand.
 -- ---------------------------------------------------------------------------
 -- insert into public.plant_managers (user_id, plant_id)
--- select 'PASTE-YOUR-AUTH-USER-UUID-HERE'::uuid, id
--- from public.plants
--- where name in ('Planta Norte — Apodaca', 'Planta Bajío — Silao')
+-- select u.id, p.id
+-- from auth.users u
+-- cross join public.plants p
+-- where u.email = 'your-email@example.com'
 -- on conflict do nothing;
