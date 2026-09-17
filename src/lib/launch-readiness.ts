@@ -44,7 +44,7 @@ export function getLaunchReadiness(
       )
       .map((other) => ({
         plantId: other.plant_id,
-        plantName: plantNamesById[other.plant_id] ?? "otra planta",
+        plantName: plantNamesById[other.plant_id] ?? "another plant",
         role: other.role,
       }));
 

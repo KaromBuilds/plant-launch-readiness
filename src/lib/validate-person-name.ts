@@ -15,19 +15,19 @@ export function validatePersonName(raw: string): PersonNameValidation {
   if (value.length < PERSON_NAME_MIN) {
     return {
       ok: false,
-      error: `El nombre debe tener al menos ${PERSON_NAME_MIN} caracteres.`,
+      error: `Name must be at least ${PERSON_NAME_MIN} characters.`,
     };
   }
   if (value.length > PERSON_NAME_MAX) {
     return {
       ok: false,
-      error: `El nombre no puede superar ${PERSON_NAME_MAX} caracteres.`,
+      error: `Name can't be longer than ${PERSON_NAME_MAX} characters.`,
     };
   }
   if (!NAME_PATTERN.test(value)) {
     return {
       ok: false,
-      error: "El nombre solo puede contener letras, espacios, apóstrofes y guiones.",
+      error: "Name can only contain letters, spaces, apostrophes, and hyphens.",
     };
   }
 

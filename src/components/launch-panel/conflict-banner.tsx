@@ -15,17 +15,17 @@ export function ConflictBanner({ conflicts }: { conflicts: Conflict[] }) {
       className="rounded-xl border border-red-800 bg-red-950/60 p-4"
     >
       <p className="text-sm font-semibold text-red-300">
-        Riesgo: punto único de falla
+        Risk: single point of failure
       </p>
       <ul className="mt-2 space-y-1 text-xs text-red-200">
         {conflicts.map((conflict) => (
           <li key={`${conflict.role}-${conflict.personName}`}>
-            {conflict.personName} está asignado como{" "}
-            {ROLE_LABELS[conflict.role]} y también como{" "}
+            {conflict.personName} is assigned as{" "}
+            {ROLE_LABELS[conflict.role]} and also as{" "}
             {conflict.conflictsWith
-              .map((c) => `${ROLE_LABELS[c.role]} en ${c.plantName}`)
+              .map((c) => `${ROLE_LABELS[c.role]} at ${c.plantName}`)
               .join(", ")}
-            . Separa las responsabilidades antes de lanzar.
+            . Separate these responsibilities before launching.
           </li>
         ))}
       </ul>

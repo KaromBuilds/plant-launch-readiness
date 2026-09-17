@@ -18,7 +18,7 @@ export function SignOutButton() {
       onClick={handleSignOut}
       className="text-sm text-neutral-400 transition hover:text-neutral-100"
     >
-      Cerrar sesión
+      Sign out
     </button>
   );
 }

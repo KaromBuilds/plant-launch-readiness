@@ -18,8 +18,7 @@ export default function LoginPage() {
       <div className="w-full max-w-sm rounded-xl border border-neutral-800 bg-neutral-900 p-8 text-center">
         <h1 className="text-lg font-semibold">Plant Launch Readiness</h1>
         <p className="mt-2 text-sm text-neutral-400">
-          Inicia sesión como Gerente de Planta para ver tu panel de
-          lanzamiento.
+          Sign in as a Plant Manager to view your launch readiness panel.
         </p>
         <button
           onClick={handleSignIn}

@@ -32,7 +32,7 @@ export default async function PlantPage({
   return (
     <main className="flex flex-1 flex-col p-8">
       <Link href="/" className="text-sm text-neutral-400 hover:text-neutral-100">
-        ← Todas las plantas
+        ← All plants
       </Link>
       <h1 className="mt-4 text-lg font-semibold">{plant.name}</h1>
       <p className="mt-1 text-xs text-neutral-500">

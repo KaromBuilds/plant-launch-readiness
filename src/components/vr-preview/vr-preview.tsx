@@ -6,10 +6,10 @@ export function VRPreview({ locked }: { locked: boolean }) {
       <div className="flex h-72 flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-neutral-700 bg-neutral-950 p-10 text-center">
         <LockIcon />
         <p className="text-sm font-medium text-neutral-300">
-          Vista previa VR bloqueada
+          VR preview locked
         </p>
         <p className="text-xs text-neutral-500">
-          Asigna los tres dueños para desbloquear la simulación.
+          Assign all three owners to unlock the simulation.
         </p>
       </div>
     );

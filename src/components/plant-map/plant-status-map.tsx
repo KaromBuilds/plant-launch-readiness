@@ -8,9 +8,9 @@ import type { Assignment } from "@/lib/owner-assignments";
 type Plant = { id: string; name: string; lat: number; lng: number };
 
 const STATUS_STYLES: Record<PlantStatus, { fill: string; label: string }> = {
-  ready: { fill: "#34d399", label: "Listo" },
-  locked: { fill: "#f59e0b", label: "Bloqueado" },
-  conflict: { fill: "#ef4444", label: "Conflicto" },
+  ready: { fill: "#34d399", label: "Ready" },
+  locked: { fill: "#f59e0b", label: "Locked" },
+  conflict: { fill: "#ef4444", label: "Conflict" },
 };
 
 const WIDTH = 400;
@@ -89,7 +89,7 @@ export function PlantStatusMap({
     <div className="rounded-xl border border-neutral-800 bg-neutral-900 p-4">
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-medium text-neutral-400">
-          Mapa de plantas
+          Plant map
         </h2>
         <ul className="flex gap-3 text-xs text-neutral-400">
           {(Object.entries(STATUS_STYLES) as [PlantStatus, (typeof STATUS_STYLES)[PlantStatus]][]).map(
@@ -110,7 +110,7 @@ export function PlantStatusMap({
         viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
         className="mt-4 w-full rounded-lg bg-neutral-950"
         role="img"
-        aria-label="Mapa de estado de lanzamiento de las plantas"
+        aria-label="Plant launch status map"
       >
         <defs>
           <pattern

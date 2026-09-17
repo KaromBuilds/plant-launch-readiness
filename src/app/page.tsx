@@ -35,13 +35,13 @@ export default async function Home() {
 
       <section className="mt-6">
         <h2 className="text-sm font-medium text-neutral-400">
-          Tus plantas
+          Your plants
         </h2>
 
         {plants.length === 0 ? (
           <p className="mt-4 text-sm text-neutral-500">
-            No tienes plantas asignadas todavía. Pide a un administrador que
-            te vincule en <code>plant_managers</code>.
+            You don&apos;t have any plants assigned yet. Ask an administrator
+            to link you in <code>plant_managers</code>.
           </p>
         ) : (
           <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">

@@ -129,7 +129,7 @@ export function LaunchPanel({
     if (error || !data) {
       setFieldErrors((prev) => ({
         ...prev,
-        [role]: error?.message ?? "No se pudo guardar la asignación.",
+        [role]: error?.message ?? "Couldn't save the assignment.",
       }));
       return;
     }
@@ -158,10 +158,10 @@ export function LaunchPanel({
               <p className="mt-1 text-xs">
                 {assignment ? (
                   <span className="text-emerald-400">
-                    Asignado: {assignment.person_name}
+                    Assigned: {assignment.person_name}
                   </span>
                 ) : (
-                  <span className="text-amber-400">Sin asignar</span>
+                  <span className="text-amber-400">Unassigned</span>
                 )}
               </p>
 
@@ -181,7 +181,7 @@ export function LaunchPanel({
                       [role]: event.target.value,
                     }))
                   }
-                  placeholder={assignment ? "Reasignar a…" : "Nombre completo"}
+                  placeholder={assignment ? "Reassign to…" : "Full name"}
                   maxLength={80}
                   className="flex-1 rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-1.5 text-sm outline-none focus:border-neutral-500"
                 />
@@ -190,7 +190,7 @@ export function LaunchPanel({
                   disabled={isSubmitting}
                   className="rounded-lg bg-neutral-100 px-3 py-1.5 text-sm font-medium text-neutral-900 transition disabled:opacity-50"
                 >
-                  {assignment ? "Reasignar" : "Asignar"}
+                  {assignment ? "Reassign" : "Assign"}
                 </button>
               </form>
               {fieldErrors[role] && (
@@ -205,7 +205,7 @@ export function LaunchPanel({
 
       {readiness.missingRoles.length > 0 && (
         <p className="text-xs text-amber-400">
-          Roles faltantes:{" "}
+          Missing roles:{" "}
           {readiness.missingRoles.map((r) => r.label).join(", ")}
         </p>
       )}
@@ -219,11 +219,11 @@ export function LaunchPanel({
           onClick={() => setLaunched(true)}
           className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-neutral-950 transition disabled:cursor-not-allowed disabled:bg-neutral-700 disabled:text-neutral-400"
         >
-          Lanzar programa de rehearsal
+          Launch rehearsal program
         </button>
         {launched && !readiness.locked && (
           <p className="text-xs text-emerald-400">
-            Programa lanzado en modo simulación.
+            Program launched in simulation mode.
           </p>
         )}
       </div>
