@@ -145,7 +145,7 @@ export function LaunchPanel({
   return (
     <div className="mt-6 flex flex-col gap-6">
       <div className="grid gap-3">
-        {OWNER_ROLES.map(({ role, label }) => {
+        {OWNER_ROLES.map(({ role, label, description }) => {
           const assignment = byRole.get(role);
           const isSubmitting = submittingRole === role;
 
@@ -155,6 +155,7 @@ export function LaunchPanel({
               className="rounded-xl border border-neutral-800 bg-neutral-900 p-4"
             >
               <p className="text-sm font-medium">{label}</p>
+              <p className="mt-0.5 text-xs text-neutral-500">{description}</p>
               <p className="mt-1 text-xs">
                 {assignment ? (
                   <span className="text-emerald-400">
