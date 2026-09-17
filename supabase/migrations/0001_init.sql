@@ -2,11 +2,15 @@
 -- Tables: plants, plant_managers, owner_assignments
 -- RLS: a plant manager can only read/write data for plants they are linked to
 -- via plant_managers.
+--
+-- Table order matters here: CREATE POLICY resolves every relation named in
+-- its USING/WITH CHECK expression at creation time, so plant_managers must
+-- exist before we create the "plants: select own" policy that references it.
 
 create extension if not exists "pgcrypto";
 
 -- ---------------------------------------------------------------------------
--- plants
+-- plants (RLS enabled below, after plant_managers exists)
 -- ---------------------------------------------------------------------------
 create table if not exists public.plants (
   id uuid primary key default gen_random_uuid(),
@@ -15,20 +19,6 @@ create table if not exists public.plants (
   lng double precision not null,
   created_at timestamptz not null default now()
 );
-
-alter table public.plants enable row level security;
-
--- A manager can only see plants they are linked to via plant_managers.
-create policy "plants: select own"
-  on public.plants for select
-  to authenticated
-  using (
-    exists (
-      select 1 from public.plant_managers pm
-      where pm.plant_id = plants.id
-        and pm.user_id = auth.uid()
-    )
-  );
 
 -- ---------------------------------------------------------------------------
 -- plant_managers — join table linking auth users to the plants they manage
@@ -48,6 +38,23 @@ create policy "plant_managers: select own"
   on public.plant_managers for select
   to authenticated
   using (user_id = auth.uid());
+
+-- ---------------------------------------------------------------------------
+-- plants RLS — now that plant_managers exists
+-- ---------------------------------------------------------------------------
+alter table public.plants enable row level security;
+
+-- A manager can only see plants they are linked to via plant_managers.
+create policy "plants: select own"
+  on public.plants for select
+  to authenticated
+  using (
+    exists (
+      select 1 from public.plant_managers pm
+      where pm.plant_id = plants.id
+        and pm.user_id = auth.uid()
+    )
+  );
 
 -- ---------------------------------------------------------------------------
 -- owner_assignments
