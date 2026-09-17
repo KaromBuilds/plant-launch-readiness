@@ -4,15 +4,12 @@ import { useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { OWNER_ROLES } from "@/lib/owner-roles";
 import { validatePersonName } from "@/lib/validate-person-name";
+import { getLaunchReadiness } from "@/lib/launch-readiness";
+import { VRPreview } from "@/components/vr-preview/vr-preview";
 import type { OwnerRole } from "@/lib/supabase/types";
+import type { Assignment } from "@/lib/owner-assignments";
 
-export type Assignment = {
-  id: string;
-  plant_id: string;
-  role: OwnerRole;
-  person_name: string;
-  assigned_at: string;
-};
+export type { Assignment };
 
 const EMPTY_DRAFTS: Record<OwnerRole, string> = {
   program: "",
@@ -77,6 +74,9 @@ export function LaunchPanel({
     return map;
   }, [assignments]);
 
+  const readiness = useMemo(() => getLaunchReadiness(assignments), [assignments]);
+  const [launched, setLaunched] = useState(false);
+
   async function handleAssign(role: OwnerRole) {
     const result = validatePersonName(drafts[role]);
     if (!result.ok) {
@@ -121,7 +121,8 @@ export function LaunchPanel({
   }
 
   return (
-    <div className="mt-6 grid gap-3">
+    <div className="mt-6 flex flex-col gap-6">
+      <div className="grid gap-3">
       {OWNER_ROLES.map(({ role, label }) => {
         const assignment = byRole.get(role);
         const isSubmitting = submittingRole === role;
@@ -173,6 +174,32 @@ export function LaunchPanel({
           </div>
         );
       })}
+      </div>
+
+      {readiness.locked && (
+        <p className="text-xs text-amber-400">
+          Roles faltantes:{" "}
+          {readiness.missingRoles.map((r) => r.label).join(", ")}
+        </p>
+      )}
+
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <button
+          type="button"
+          disabled={readiness.locked}
+          onClick={() => setLaunched(true)}
+          className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-neutral-950 transition disabled:cursor-not-allowed disabled:bg-neutral-700 disabled:text-neutral-400"
+        >
+          Lanzar programa de rehearsal
+        </button>
+        {launched && !readiness.locked && (
+          <p className="text-xs text-emerald-400">
+            Programa lanzado en modo simulación.
+          </p>
+        )}
+      </div>
+
+      <VRPreview locked={readiness.locked} />
     </div>
   );
 }

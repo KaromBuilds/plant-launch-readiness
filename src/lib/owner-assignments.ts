@@ -1,4 +1,13 @@
 import { createClient } from "@/lib/supabase/server";
+import type { OwnerRole } from "@/lib/supabase/types";
+
+export type Assignment = {
+  id: string;
+  plant_id: string;
+  role: OwnerRole;
+  person_name: string;
+  assigned_at: string;
+};
 
 export async function getOwnerAssignments(plantId: string) {
   const supabase = await createClient();
@@ -8,5 +17,5 @@ export async function getOwnerAssignments(plantId: string) {
     .eq("plant_id", plantId);
 
   if (error) throw error;
-  return data;
+  return data as Assignment[];
 }
